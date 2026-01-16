@@ -1,8 +1,7 @@
 // src/components/StartProjectForm.jsx
-// src/components/StartProjectForm.jsx
 import React, { useState } from "react";
 
-// Define BACKEND_URL at the top level
+// Define backend URL
 const BACKEND_URL = import.meta.env.PROD
   ? "https://mintpixel-1.onrender.com"
   : "http://localhost:5000";
@@ -16,7 +15,7 @@ const StartProjectForm = () => {
     budget: "",
     message: "",
   });
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState(null); // 'success' | 'error' | null
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -33,8 +32,8 @@ const StartProjectForm = () => {
     setStatus(null);
 
     try {
-      // REMOVED: Don't redefine BACKEND_URL here
-      // const BACKEND_URL = import.meta.env.PROD ... // DELETE THIS
+      console.log("Submitting form to:", `${BACKEND_URL}/send-email`);
+      console.log("Form data:", formData);
 
       const response = await fetch(`${BACKEND_URL}/send-email`, {
         method: "POST",
@@ -44,9 +43,19 @@ const StartProjectForm = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      console.log("Response status:", response.status);
 
-      if (data.message === "Email sent successfully") {
+      let data;
+      try {
+        data = await response.json();
+        console.log("Response data:", data);
+      } catch (parseError) {
+        console.error("Failed to parse JSON:", parseError);
+        throw new Error("Invalid server response");
+      }
+
+      // Check both success flag and message
+      if (data.success === true || data.message === "Email sent successfully") {
         setStatus("success");
         setFormData({
           name: "",
@@ -58,6 +67,7 @@ const StartProjectForm = () => {
         });
       } else {
         setStatus("error");
+        console.error("Server error:", data.message);
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -133,7 +143,7 @@ const StartProjectForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white"
                 placeholder="Your Name"
               />
             </div>
@@ -153,7 +163,7 @@ const StartProjectForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white"
                 placeholder="you@company.com"
               />
             </div>
@@ -172,7 +182,7 @@ const StartProjectForm = () => {
                 value={formData.service}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white appearance-none"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white appearance-none"
               >
                 <option value="" disabled>
                   Select a service
@@ -198,7 +208,7 @@ const StartProjectForm = () => {
                 name="timeline"
                 value={formData.timeline}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white appearance-none"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white appearance-none"
               >
                 <option value="">Choose option</option>
                 {timelines.map((t) => (
@@ -222,7 +232,7 @@ const StartProjectForm = () => {
                 name="budget"
                 value={formData.budget}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white appearance-none"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white appearance-none"
               >
                 <option value="">Share your budget range (optional)</option>
                 {budgets.map((b) => (
@@ -250,7 +260,7 @@ const StartProjectForm = () => {
               onChange={handleChange}
               required
               placeholder="Describe your goals, target audience, inspiration, or any specific requirements..."
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-white focus:border-white resize-none"
             ></textarea>
           </div>
 
@@ -258,12 +268,38 @@ const StartProjectForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition disabled:opacity-70 text-lg"
+            className="w-full py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-all disabled:opacity-70 disabled:cursor-not-allowed text-lg"
           >
-            {loading ? "Sending Brief…" : "Submit Project Request"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Sending Brief…
+              </span>
+            ) : (
+              "Submit Project Request"
+            )}
           </button>
 
-          <p className="text-center text-xs text-gray-500 mt-4">
+          <p className="text-center text-xs text-gray-400 mt-4">
             We respect your privacy. Your data will only be used to contact you
             about this project.
           </p>
