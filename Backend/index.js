@@ -13,7 +13,10 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ CORS Configuration – Allow only your frontend origin
 const corsOptions = {
-  origin: "http://localhost:5173", // Vite dev server
+  origin: [
+    "http://localhost:5173", // برای توسعه محلی
+    "https://mintpixel-zful.vercel.app", // برای محیط تولید
+  ],
   optionsSuccessStatus: 200,
 };
 
