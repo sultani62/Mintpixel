@@ -1,5 +1,11 @@
 // src/components/StartProjectForm.jsx
+// src/components/StartProjectForm.jsx
 import React, { useState } from "react";
+
+// Define BACKEND_URL at the top level
+const BACKEND_URL = import.meta.env.PROD
+  ? "https://mintpixel-1.onrender.com"
+  : "http://localhost:5000";
 
 const StartProjectForm = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +16,7 @@ const StartProjectForm = () => {
     budget: "",
     message: "",
   });
-  const [status, setStatus] = useState(null); // 'success' | 'error' | null
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -27,9 +33,8 @@ const StartProjectForm = () => {
     setStatus(null);
 
     try {
-      const BACKEND_URL = import.meta.env.PROD
-        ? "https://mintpixel-1.onrender.com"
-        : "http://localhost:5000";
+      // REMOVED: Don't redefine BACKEND_URL here
+      // const BACKEND_URL = import.meta.env.PROD ... // DELETE THIS
 
       const response = await fetch(`${BACKEND_URL}/send-email`, {
         method: "POST",
