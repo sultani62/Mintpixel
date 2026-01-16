@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 5000;
 // ✅ CORS Configuration – Allow only your frontend origin
 const corsOptions = {
   origin: [
-    "http://localhost:5173", // برای توسعه محلی
-    "https://mintpixel-zful.vercel.app", // برای محیط تولید
+    "http://localhost:5173",
+    "https://mintpixel-zful.vercel.app" // بدون فاصله
   ],
   optionsSuccessStatus: 200,
 };
@@ -97,4 +97,6 @@ app.listen(PORT, () => {
   console.log(`🟢 Server running on http://localhost:${PORT}`);
 });
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BACKEND_URL = import.meta.env.PROD
+  ? "https://mintpixel-1.onrender.com" // بدون فاصله
+  : "http://localhost:5000";
