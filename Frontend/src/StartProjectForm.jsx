@@ -27,7 +27,11 @@ const StartProjectForm = () => {
     setStatus(null);
 
     try {
-      const response = await fetch("http://localhost:5000/send-email", {
+      const BACKEND_URL = import.meta.env.PROD
+        ? "https://mintpixel-1.onrender.com"
+        : "http://localhost:5000";
+
+      const response = await fetch(`${BACKEND_URL}/send-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +82,10 @@ const StartProjectForm = () => {
   ];
 
   return (
-    <div id="start-project" className="w-full bg-black text-white rounded-lg py-20 px-4 sm:px-6 md:px-8 lg:px-12">
+    <div
+      id="start-project"
+      className="w-full bg-black text-white rounded-lg py-20 px-4 sm:px-6 md:px-8 lg:px-12"
+    >
       <div className="max-w-6xl mx-auto w-full">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">

@@ -93,3 +93,5 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🟢 Server running on http://localhost:${PORT}`);
 });
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
